@@ -1,0 +1,11 @@
+[
+  {
+    "task": "Write a Python function that takes an AWS ARN string and extracts the region from it. The function should return the region code (e.g., 'us-east-1') or None if the ARN is invalid."
+  },
+  {
+    "task": "Create a JSON object representing an AWS IAM policy that allows read-only access to a specific S3 bucket named 'my-app-logs'. The policy should allow s3:GetObject and s3:ListBucket actions."
+  },
+  {
+    "task": "Write a regex pattern that validates AWS S3 bucket names according to AWS naming rules: 3-63 characters long, only lowercase letters, numbers, hyphens, and periods, must start and end with a letter or number, and cannot have consecutive periods."
+  }
+]
