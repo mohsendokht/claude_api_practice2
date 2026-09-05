@@ -1,4 +1,4 @@
-from dotenv import load_dotenv
+from dotenv import load_dotenv # pyright: ignore[reportMissingImports]
 from claude_helper import chat,chat_sp,add_assistant_message,add_user_message
 from anthropic import Anthropic
 
