@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clinic Wait Time</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .clinic-name {
+      font-size: 28px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .content {
+      text-align: center;
+    }
+
+    .info-box {
+      background: #f8f9fa;
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      border-left: 5px solid #667eea;
+    }
+
+    .label {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .queue-length {
+      font-size: 60px;
+      font-weight: bold;
+      color: #667eea;
+      margin: 15px 0;
+    }
+
+    .wait-time {
+      font-size: 48px;
+      font-weight: bold;
+      color: #764ba2;
+      margin: 20px 0;
+    }
+
+    .wait-label {
+      font-size: 14px;
+      color: #666;
+      margin-top: 10px;
+    }
+
+    .status {
+      font-size: 14px;
+      color: #999;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #ddd;
+    }
+
+    .closed-message {
+      background: #fff3cd;
+      color: #856404;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 5px solid #ffc107;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 5px solid #dc3545;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .refresh-info {
+      font-size: 12px;
+      color: #999;
+      margin-top: 20px;
+      font-style: italic;
+    }
+
+    .loading {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 25px 20px;
+        border-radius: 15px;
+      }
+
+      .clinic-name {
+        font-size: 24px;
+      }
+
+      .queue-length {
+        font-size: 48px;
+      }
+
+      .wait-time {
+        font-size: 36px;
+      }
+
+      .label {
+        font-size: 14px;
+      }
+
+      .info-box {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="clinic-name">🏥 Main Community Health Clinic</div>
+      <div class="subtitle">Current Wait Time Information</div>
+    </div>
+
+    <div class="content" id="content">
+      <div class="info-box">
+        <div class="label">People Waiting</div>
+        <div class="queue-length loading" id="queueLength">-</div>
+
+        <div class="label" style="margin-top: 30px;">Estimated Wait Time</div>
+        <div class="wait-time" id="waitTime">-</div>
+        <div class="wait-label">minutes</div>
+
+        <div class="status" id="status">Loading...</div>
+      </div>
+
+      <div class="refresh-info">ℹ️ This page updates automatically every 15 seconds</div>
+    </div>
+  </div>
+
+  <script>
+    async function fetchQueueData() {
+      try {
+        const response = await fetch('/api/queue');
+        if (!response.ok) throw new Error('Failed to fetch queue data');
+
+        const data = await response.json();
+
+        const contentDiv = document.getElementById('content');
+
+        if (data.clinic_status === 'closed') {
+          contentDiv.innerHTML = `
+            <div class="closed-message">
+              🕐 The clinic is currently closed.<br>
+              <small>Operating hours: 09:00 AM - 05:00 PM</small>
+            </div>
+          `;
+          return;
+        }
+
+        const queueLength = data.queue_length;
+        const waitTime = data.estimated_wait_time;
+        const timestamp = new Date(data.timestamp);
+        const timeString = timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        document.getElementById('queueLength').textContent = queueLength;
+        document.getElementById('waitTime').textContent = waitTime;
+
+        let waitText = '';
+        if (waitTime === 0) {
+          waitText = '✅ No Waiting';
+        } else if (waitTime < 1) {
+          waitText = '⏱️ Less than 1 minute';
+        } else {
+          waitText = `📊 Last updated: ${timeString}`;
+        }
+
+        document.getElementById('status').innerHTML = waitText;
+
+        // Remove loading animation
+        document.getElementById('queueLength').classList.remove('loading');
+
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('content').innerHTML = `
+          <div class="error-message">
+            ⚠️ Unable to load queue information<br>
+            <small>Please check your connection and refresh</small>
+          </div>
+        `;
+      }
+    }
+
+    // Fetch on load
+    fetchQueueData();
+
+    // Refresh every 15 seconds
+    setInterval(fetchQueueData, 15000);
+  </script>
+</body>
+</html>

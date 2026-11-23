@@ -1,0 +1,17 @@
+{
+  "clinic_name": "Main Community Health Clinic",
+  "open_time": "09:00",
+  "close_time": "17:00",
+  "is_open": true,
+  "staff": [
+    {
+      "username": "staff1",
+      "password": "demo123"
+    },
+    {
+      "username": "staff2",
+      "password": "demo123"
+    }
+  ],
+  "avg_consultation_duration": 12
+}

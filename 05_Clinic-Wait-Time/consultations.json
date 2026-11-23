@@ -1,0 +1,9 @@
+{
+  "consultations": [
+    { "patient_id": 1, "duration_minutes": 10, "completed_at": "2024-01-15T09:00:00Z" },
+    { "patient_id": 2, "duration_minutes": 15, "completed_at": "2024-01-15T09:15:00Z" },
+    { "patient_id": 3, "duration_minutes": 12, "completed_at": "2024-01-15T09:30:00Z" },
+    { "patient_id": 4, "duration_minutes": 14, "completed_at": "2024-01-15T09:45:00Z" },
+    { "patient_id": 5, "duration_minutes": 11, "completed_at": "2024-01-15T10:00:00Z" }
+  ]
+}
