@@ -1,6 +1,6 @@
 """Simple example of calling the Claude API."""
-from dotenv import load_dotenv # pyright: ignore[reportMissingImports]
-from anthropic import Anthropic
+from dotenv import load_dotenv 
+from anthropic import Anthropic 
 
 load_dotenv()
 
