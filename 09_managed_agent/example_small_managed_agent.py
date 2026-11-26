@@ -7,6 +7,21 @@ load_dotenv()
 
 client = anthropic.Anthropic()
 
+
+def cleanup_managed_resources(
+    agent_id: str, session_id: str, environment_id: str
+) -> None:
+    client.beta.sessions.delete(session_id=session_id)
+    print(f"Deleted session: {session_id}")
+
+    client.beta.environments.delete(environment_id=environment_id)
+    print(f"Deleted environment: {environment_id}")
+
+    # Managed Agents supports archiving agents, not permanently deleting them.
+    client.beta.agents.archive(agent_id=agent_id)
+    print(f"Archived agent: {agent_id}")
+
+
 print("Creating a file in the temp drive, counting its lines, and reporting back.")
 
 # Step 1: Create the agent
@@ -59,14 +74,19 @@ with client.beta.sessions.events.stream(session_id=session.id) as stream:
         ],
     )
 
-# Step 5: Consume the stream    
-for event in stream:
-        if event.type == "agent.message":
-            for block in event.content:
-                if block.type == "text":
-                    print(block.text, end="", flush=True)
-        elif event.type == "agent.tool_use":
-            print(f"\n[tool] {event.name}")
-        elif event.type == "session.status_idle":
-            print("\n--- Agent done ---")
-            break
+    # Step 5: Consume the stream    
+    for event in stream:
+            if event.type == "agent.message":
+                for block in event.content:
+                    if block.type == "text":
+                        print(block.text, end="", flush=True)
+            elif event.type == "agent.tool_use":
+                print(f"\n[tool] {event.name}")
+            elif event.type == "session.status_idle":
+                print("\n--- Agent done ---")
+                break
+
+cleanup_managed_resources(agent.id, session.id, environment.id)
+#Created agent with ID: agent_01KfCxo6VmbxsN2CPdLduZ1L
+#Created environment with ID: env_01FWXNG4JaLRkUhrXfaiinFg
+#Created session with ID: sesn_0193GUJQ6BaDErs2TfRUMgsC

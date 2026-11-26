@@ -94,7 +94,7 @@ load_dotenv()
 
 # reads ANTHROPIC_API_KEY from the environment
 client = Anthropic()
-# simple_ask()
+simple_ask()
 # ask_with_system()
-compare_models()
+# compare_models()
 
