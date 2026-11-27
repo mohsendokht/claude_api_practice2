@@ -1,4 +1,0 @@
-- install claude code in Powershell terminal: 
-  - irm https://claude.ai/install.ps1 | iex
-- Add to Windws PATH: 
-  - [Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "User") + ";C:\Users\Hamid.Mohsendokht\.local\bin", "User")  
